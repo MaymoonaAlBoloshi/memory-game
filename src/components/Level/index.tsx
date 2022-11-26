@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
+import { randomAnimal } from './utils';
 
 import styles from './styles';
 
@@ -17,29 +17,11 @@ export const Level = () => {
 	const classes = styles();
 	const { difficulty } = useParams<{ difficulty: string }>();
 	const navigate = useNavigate();
-	const randomAnimal = () => {
-		const animals = [
-			'🐶',
-			'🐱',
-			'🐭',
-			'🐹',
-			'🐰',
-			'🦊',
-			'🐻',
-			'🐼',
-			'🐨',
-			'🐯',
-			'🦁',
-			'🐮',
-			'🐷',
-		];
-		const randomIndex = Math.floor(Math.random() * animals.length);
-		return animals[randomIndex];
-	};
+
 	const createPairs = (difficulty: number) => {
 		let pairs = [];
 		// create first half of the cards
-		for (let i = 0; i < difficulty * 2; i++) {
+		for (let i = 0; i < difficulty; i++) {
 			pairs.push({
 				name: String.fromCharCode(97 + i),
 				isFlipped: false,
@@ -63,12 +45,12 @@ export const Level = () => {
 		return pairs;
 	};
 
-	const checkMatch = (pair: IPair) => {
+	const checkMatch = () => {
 		const flippedCards = gameCards.filter((card) => card.isFlipped);
 		const filteredFlippedCards = flippedCards.filter((card) => !card.isMatched);
 		if (filteredFlippedCards.length === 2) {
 			setTimeout(() => {
-				manageMatch(pair);
+				manageMatch();
 				flipBackNonMatched();
 			}, 1000);
 		}
@@ -92,13 +74,7 @@ export const Level = () => {
 		const matchedCards = gameCards.filter((card) => card.isMatched);
 		if (matchedCards.length === gameCards.length && gameCards.length > 0) {
 			setWin(true);
-			playAudio('win.wav');
 		}
-	};
-
-	const playAudio = (audio: string) => {
-		const audioElement = new Audio(audio);
-		audioElement.play();
 	};
 
 	const manageMatch = () => {
@@ -127,7 +103,7 @@ export const Level = () => {
 		const newPairs = [...gameCards];
 		newPairs[index].isFlipped = true;
 		setGameCards(newPairs);
-		checkMatch(newPairs[index]);
+		checkMatch();
 	};
 
 	const backToMenu = () => {

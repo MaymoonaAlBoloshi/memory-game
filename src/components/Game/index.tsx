@@ -11,22 +11,25 @@ export const Game = () => {
 
 	return (
 		<div className={classes.game}>
-			<h2 className={classes.pageTttle}> Select Difficulty </h2>
+			<h2 className={classes.pageTttle}> MEMORY GAME </h2>
+			<p>
+				Select the difficulty level and start the game. You have 3 levels to choose
+			</p>
 			<section className={classes.buttonGroup}>
 				<button
 					className={classes.difficultyBtn}
 					onClick={() => handleStartGame(2)}>
-					2/2
+					Easy
 				</button>
 				<button
 					className={classes.difficultyBtn}
 					onClick={() => handleStartGame(4)}>
-					4/4
+					Medium
 				</button>
 				<button
 					className={classes.difficultyBtn}
 					onClick={() => handleStartGame(6)}>
-					6/6
+					Hard
 				</button>
 			</section>
 		</div>

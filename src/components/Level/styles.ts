@@ -27,6 +27,7 @@ const useStyles = createUseStyles({
     WebkitBackdropFilter: "blur(10px)",
     borderRadius: "10px",
     padding: 6,
+    boxShadow: "inset 0 0 10px rgba(0, 0, 0, 0.5)",
   },
   card: {
     display: "flex",
@@ -41,6 +42,7 @@ const useStyles = createUseStyles({
     WebkitBackdropFilter: "blur(10px)",
     borderRadius: "10px",
     cursor: "pointer",
+    boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
     "&:hover": {
       background: "rgba(255, 255, 255, 0.6)",
     },
@@ -90,17 +92,18 @@ const useStyles = createUseStyles({
     border: 'none',
     width: 80,
     height: 60,
-    fontSize: 34,
+    fontSize: 30,
     backdropFilter: 'blur(10px)',
-    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 0, 0, 0.3) 100%)',
+    background: 'linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(255, 0, 0, 0.5) 100%)',
     WebkitBackdropFilter: 'blur(10px)',
     borderRadius: '10px',
     cursor: 'pointer',
     color: 'white',
     fontWeight: 'bold',
     padding: 16,
+    boxShadow: '0 2px 12px 0 rgba(31, 38, 135, 0.37)',
     '&:hover': {
-      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 0, 0, 0.4) 100%)',
+      background: 'linear-gradient(135deg, rgba(255, 0, 255, 0.4) 0%, rgba(255, 0, 0, 0.6) 100%)',
     },
   }
 });

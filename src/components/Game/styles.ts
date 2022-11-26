@@ -12,7 +12,7 @@ const useStyles = createUseStyles({
   },
   pageTttle: {
     fontSize: "2rem",
-    marginBottom: "1rem",   
+    marginBottom: "1rem",
   },
   buttonGroup: {
     display: "flex",
@@ -23,6 +23,8 @@ const useStyles = createUseStyles({
     backdropFilter: "blur(10px)",
     WebkitBackdropFilter: "blur(10px)",
     borderRadius: "10px",
+    boxShadow: " 0 0 10px rgba(255, 255, 255, 0.2)",
+
   },
   difficultyBtn: {
     border: "none",
