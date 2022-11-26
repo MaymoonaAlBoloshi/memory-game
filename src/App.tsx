@@ -1,23 +1,18 @@
 import { Game } from './components/Game';
 import { Level } from './components/Level';
-import {
-	BrowserRouter as Router,
-	Routes,
-	Route,
-	Outlet,
-	Navigate,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 const routes = [
 	{
 		path: '/',
-		element: <Level />,
+		element: <Game />,
 	},
 	{
 		path: '/level/:difficulty',
 		element: <Level />,
 	},
 ];
+
 function App() {
 	return (
 		<Router>

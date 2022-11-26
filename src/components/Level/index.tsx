@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+
 import styles from './styles';
 
 interface IPair {
@@ -8,13 +11,34 @@ interface IPair {
 	isMatched: boolean;
 }
 export const Level = () => {
-	const [pair, setPair] = useState<IPair>();
+	const [win, setWin] = useState<boolean>(false);
 	const [gameCards, setGameCards] = useState<IPair[]>([]);
+	const [animal, setAnimal] = useState<string>('');
 	const classes = styles();
-	const difficulty = 2;
-
+	const { difficulty } = useParams<{ difficulty: string }>();
+	const navigate = useNavigate();
+	const randomAnimal = () => {
+		const animals = [
+			'🐶',
+			'🐱',
+			'🐭',
+			'🐹',
+			'🐰',
+			'🦊',
+			'🐻',
+			'🐼',
+			'🐨',
+			'🐯',
+			'🦁',
+			'🐮',
+			'🐷',
+		];
+		const randomIndex = Math.floor(Math.random() * animals.length);
+		return animals[randomIndex];
+	};
 	const createPairs = (difficulty: number) => {
-		let  pairs = [];
+		let pairs = [];
+		// create first half of the cards
 		for (let i = 0; i < difficulty * 2; i++) {
 			pairs.push({
 				name: String.fromCharCode(97 + i),
@@ -22,40 +46,148 @@ export const Level = () => {
 				isMatched: false,
 			});
 		}
-		pairs = [...pairs, ...pairs]
+		pairs = [...pairs, ...pairs];
+		// add number property
+		pairs = pairs.map((pair, index) => {
+			return {
+				...pair,
+				number: index,
+			};
+		});
+		// randomize pairs
+		for (let i = pairs.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+		}
 
 		return pairs;
 	};
 
+	const checkMatch = (pair: IPair) => {
+		const flippedCards = gameCards.filter((card) => card.isFlipped);
+		const filteredFlippedCards = flippedCards.filter((card) => !card.isMatched);
+		if (filteredFlippedCards.length === 2) {
+			setTimeout(() => {
+				manageMatch(pair);
+				flipBackNonMatched();
+			}, 1000);
+		}
+	};
+
+	const flipBackNonMatched = () => {
+		setGameCards((prevState) =>
+			prevState.map((card) => {
+				if (card.isFlipped && !card.isMatched) {
+					return {
+						...card,
+						isFlipped: false,
+					};
+				}
+				return card;
+			})
+		);
+	};
+
+	const winGame = () => {
+		const matchedCards = gameCards.filter((card) => card.isMatched);
+		if (matchedCards.length === gameCards.length && gameCards.length > 0) {
+			setWin(true);
+			playAudio('win.wav');
+		}
+	};
+
+	const playAudio = (audio: string) => {
+		const audioElement = new Audio(audio);
+		audioElement.play();
+	};
+
+	const manageMatch = () => {
+		const flippedCards = gameCards.filter((card) => card.isFlipped);
+		const filteredFlippedCards = flippedCards.filter((card) => !card.isMatched);
+		if (filteredFlippedCards.length === 2) {
+			const firstCard = filteredFlippedCards[0];
+			const secondCard = filteredFlippedCards[1];
+			if (firstCard.name === secondCard.name) {
+				setGameCards((prevState) =>
+					prevState.map((card) => {
+						if (card.isFlipped && !card.isMatched) {
+							return {
+								...card,
+								isMatched: true,
+							};
+						}
+						return card;
+					})
+				);
+			}
+		}
+	};
 
 	const handleCardClick = (index: number) => {
 		const newPairs = [...gameCards];
-		newPairs[index].isFlipped = !newPairs[index].isFlipped;
+		newPairs[index].isFlipped = true;
 		setGameCards(newPairs);
+		checkMatch(newPairs[index]);
+	};
+
+	const backToMenu = () => {
+		navigate('/');
 	};
 
 	useEffect(() => {
-		return setGameCards(createPairs(difficulty));
+		setAnimal(randomAnimal());
+		return setGameCards(createPairs(parseInt(difficulty!)));
 	}, []);
 
-	// console.log('gameCards', gameCards)
+	useEffect(() => {
+		winGame();
+	}, [gameCards]);
+
+	const WinModal = () => {
+		return (
+			<div className={classes.modal}>
+				<h1>You win!</h1>
+				<button className={classes.modalButton} onClick={() => setWin(false)}>
+					Play again
+				</button>
+				<button className={classes.modalButton} onClick={backToMenu}>
+					Back to menu
+				</button>
+			</div>
+		);
+	};
 	return (
 		<div className={classes.continer}>
-			<h2 className={classes.pageTttle}> Select Difficulty </h2>
-			{/* create the grid of cards as buttons for now */}
-			<section className={classes.cardGrid}>
-				{gameCards.map((pair) => (
-					<div className={classes.card} key={pair.number}>
-						<button
-							className={classes.cardBtn}
-							key={pair.number}
-							onClick={() => handleCardClick(pair.number)}>
-							{pair.name}
-							{pair.isFlipped.toString()}
-						</button>
-					</div>
-				))}
-			</section>
+			{win ? (
+				<WinModal />
+			) : (
+				<>
+					<button className={classes.backButton} onClick={backToMenu}>
+						{'X'}
+					</button>
+					<section className={classes.cardGrid}>
+						{gameCards.map((pair, i) => (
+							<div
+								className={classes.card}
+								key={pair.number}
+								style={{
+									background: pair.isFlipped
+										? pair.isMatched
+											? 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
+											: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+										: 'linear-gradient(135deg, #5ee7df 0%, #b490ca 100%)',
+								}}>
+								<button
+									className={classes.cardBtn}
+									key={pair.number}
+									onClick={() => handleCardClick(i)}>
+									{pair.isFlipped ? pair.name : animal}
+								</button>
+							</div>
+						))}
+					</section>
+				</>
+			)}
 		</div>
 	);
 };
